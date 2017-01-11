@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class StatusController {
 
+    private OrderServiceStub orderService = new OrderServiceStub();
+
+    @RequestMapping(value = "/order-status", method = RequestMethod.GET, produces = "application/JSON")
+    public OrderStatus getOrderStatus (@RequestParam(value = "orderId") String orderId) {
+        return orderService.getOrderStatus(orderId);
+
+    }
+
 
 
 

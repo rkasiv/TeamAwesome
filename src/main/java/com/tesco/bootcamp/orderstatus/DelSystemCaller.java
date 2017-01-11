@@ -20,21 +20,12 @@ public class DelSystemCaller {
     private Object EventFromDelService;
 
     public DelSystemCaller(){
-        deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080";
-        getEventsByOrderURL = "events/ghs/order";
-        getEventsByParcelURL = "events/ghs/parcel";
-    }
-
-    public TrackingEvent getLatestOrderEvent(String orderID){
-
-
-
-        return new TrackingEvent();
+        deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
+        getEventsByOrderURL = "events/ghs/order?orderId=";
+        getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
     private String getParcelID(String orderID){
-
-
 
         return "";
     }
@@ -45,17 +36,53 @@ public class DelSystemCaller {
         this.parcelID = parcelID;
     }
 
-    public List<String> collectParcelID(String orderID) {
+    public List<EventFromDelService> collectParcelID(String orderID) {
         RestTemplate restTemplate = new RestTemplate();
+        StringBuilder sb = new StringBuilder();
+        sb.append(deliveryServiceBaseURL);
+        sb.append(getEventsByOrderURL);
+        sb.append(orderID);
         try {
             ResponseEntity<List<EventFromDelService>> collectRequestResult = restTemplate.exchange(
-                    "http://delivery.dev-environment.tesco.codurance.io:8080/events/ghs/order?orderId=a3712165-9a9a-4726-aeb6-e263f80635c0",HttpMethod.GET,null,  new ParameterizedTypeReference<List<EventFromDelService>>() {});
+                    sb.toString(),
+                    HttpMethod.GET,null,
+                    new ParameterizedTypeReference<List<EventFromDelService>>(){});
 
+            return collectRequestResult.getBody().stream()
+                    .map(eventFromDelService -> new EventFromDelService(eventFromDelService.getEventType(),
+                            eventFromDelService.getShopID(),
+                            eventFromDelService.getOrderID(),
+                            eventFromDelService.getParcelID(),
+                            eventFromDelService.getEventDateTime())).collect(Collectors.toList());
 
-            return null;
         } catch (Exception e) {
 
-            throw new RuntimeException("Parcels cannot be collected from the shop", e);
+            throw new RuntimeException("Failed to obtain parcel ID", e);
+        }
+    }
+
+    public List<TrackingEvent> collectTrackingEvents(String parcelID) {
+        RestTemplate restTemplate = new RestTemplate();
+        StringBuilder sb = new StringBuilder();
+        sb.append(deliveryServiceBaseURL);
+        sb.append(getEventsByParcelURL);
+        sb.append(parcelID);
+        try {
+            ResponseEntity<List<TrackingEvent>> collectRequestResult = restTemplate.exchange(
+                    sb.toString(),
+                    HttpMethod.GET,null,
+                    new ParameterizedTypeReference<List<TrackingEvent>>(){});
+
+            return collectRequestResult.getBody().stream()
+                    .map(trackingEvent -> new TrackingEvent(trackingEvent.getEventType(),
+                            trackingEvent.getVanID(),
+                            trackingEvent.getParcelID(),
+                            trackingEvent.getEventDateTime())).collect(Collectors.toList());
+
+
+        } catch (Exception e) {
+
+            throw new RuntimeException("Failed to obtain tracking ID", e);
         }
     }
 }

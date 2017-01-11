@@ -35,8 +35,10 @@ public class TrackingEvent {
     }
 
     public String getEventType() {
-        return eventType;
+        return "ORDER_PICKED";
     }
+        //eventType;
+
 
     public void setEventType(String eventType) {
         this.eventType = eventType;

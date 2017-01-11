@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final String orderid;
-    private TrackingEvent trackingEvent;
-
 
     @Autowired
 
@@ -22,15 +20,13 @@ public class OrderService {
         this.orderid = orderid;
 
     }
-// test commit
 
     public String getOrderStatus()
     {
-       // DelSystemCaller delSystemCaller;
-       //TrackingEvent eventRes = delSystemCaller.getLatestOrderEvent(String orderid);
+       DelSystemCaller delSystemCaller = new DelSystemCaller();
+       TrackingEvent eventRes = delSystemCaller.getLatestOrderEvent(orderid);
 
-           String latestEvent =  trackingEvent.eventtype;
-       // String latestevent = eventRes.status;
+       String latestEvent = eventRes.getEventType();
 
         String orderStatus = eventToOrderStatus(latestEvent);
         return  orderStatus;

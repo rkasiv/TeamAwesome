@@ -29,7 +29,7 @@ public class StatusControllerTest {
 
     @Test
     public void shouldReturnOrderStatus() throws Exception {
-        OrderStatus orderStatus = new OrderStatus("DELIVERED",AN_ORDER_ID);
+        OrderStatus orderStatus = new OrderStatus(AN_ORDER_ID, "DELIVERED");
         when(orderService.getOrderStatus(AN_ORDER_ID)).thenReturn(Optional.of(orderStatus));
 
         mvc.perform(get("/order-status").param("orderId", AN_ORDER_ID).accept(MediaType.APPLICATION_JSON))
@@ -43,5 +43,15 @@ public class StatusControllerTest {
         when(orderService.getOrderStatus(AN_ORDER_ID)).thenReturn(Optional.empty());
         mvc.perform(get("/order-status").param("orderId", AN_ORDER_ID).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturn400WhenOrderIdMissing() throws Exception {
+        // given
+            // not required
+        // when
+        mvc.perform(get("/order-status").accept(MediaType.APPLICATION_JSON))
+        // then
+                .andExpect(status().isBadRequest());
     }
 }

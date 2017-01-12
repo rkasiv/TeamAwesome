@@ -23,10 +23,11 @@ public class OrderService {
 
     public String getOrderStatus()
     {
-       DelSystemCaller delSystemCaller = new DelSystemCaller();
-       TrackingEvent eventRes = delSystemCaller.getLatestOrderEvent(orderid);
 
-       String latestEvent = eventRes.getEventType();
+        DelSystemCaller delSystemCaller = new DelSystemCaller();
+        TrackingEvent eventRes = delSystemCaller.getLatestOrderEvent(orderid);
+
+        String latestEvent = eventRes.getEventType();
 
         String orderStatus = eventToOrderStatus(latestEvent);
         return  orderStatus;

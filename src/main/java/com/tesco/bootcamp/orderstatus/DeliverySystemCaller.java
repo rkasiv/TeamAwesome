@@ -33,6 +33,8 @@ public class DeliverySystemCaller {
 
     public TrackingEvent getLatestTrackingEvent(String orderID){
 
+        TrackingEvent latestEvent;
+
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
         if(orderEvents.size()>1) {
@@ -43,13 +45,22 @@ public class DeliverySystemCaller {
 
                 List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
 
-            TrackingEvent latestEvent = returnLatestTrackingEvent(trackingEvents);
+            if (trackingEvents.size()>1) {
 
-            return latestEvent;
+
+                latestEvent = returnLatestTrackingEvent(trackingEvents);
+
+            }
+
+            else{
+                latestEvent = new TrackingEvent("NO_EVENT","","","");
+            }
         }
         else{
-            return null;
+            latestEvent = new TrackingEvent("NO_EVENT","","","");
         }
+
+        return latestEvent;
     }
 
     private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents){

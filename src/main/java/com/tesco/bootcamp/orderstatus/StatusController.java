@@ -11,22 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by cx11 on 11/01/2017.
  */
-
 @RestController
 @EnableAutoConfiguration
-
 public class StatusController {
 
-    private OrderServiceStub orderService = new OrderServiceStub();
+    private final OrderService orderService;
 
-    @RequestMapping(value = "/order-status", method = RequestMethod.GET, produces = "application/JSON")
-    public OrderStatus getOrderStatus (@RequestParam(value = "orderId") String orderId) {
-        return orderService.getOrderStatus(orderId);
-
+    @Autowired
+    public StatusController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-
-
-
-
+    @RequestMapping(value = "/order-status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public OrderStatus getOrderStatus (@RequestParam(value = "orderId") String orderId) {
+        return orderService.getOrderStatus(orderId)
+                .orElseThrow(OrderStatusNotFound::new);
+    }
 }

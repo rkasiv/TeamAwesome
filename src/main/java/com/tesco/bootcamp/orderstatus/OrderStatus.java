@@ -5,6 +5,11 @@ public class OrderStatus {
     private String orderId;
     private String status;
 
+    public OrderStatus(String orderId, String status){
+        this.orderId = orderId;
+        this.status = status;
+    }
+
     public String getOrderId() {
         return orderId;
     }

@@ -11,7 +11,6 @@ public class Application {
         String test = orderService.getOrderStatus();
 
         System.out.println(test);
-        System.out.println();
 
 
     }

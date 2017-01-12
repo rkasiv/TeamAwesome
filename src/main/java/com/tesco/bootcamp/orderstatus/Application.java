@@ -1,19 +1,17 @@
 package com.tesco.bootcamp.orderstatus;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 /**
  * Created by cx11 on 11/01/2017.
  */
+@SpringBootApplication
+
 public class Application {
 
     public static void main(String[] args) {
-
-        OrderService orderService = new OrderService("a3712165-9a9a-4726-aeb6-e263f80635c0");
-        String test = orderService.getOrderStatus();
-
-        System.out.println(test);
-
-
+        SpringApplication.run(Application.class, args);
     }
-
 
 }

@@ -1,5 +1,8 @@
 package com.tesco.bootcamp.orderstatus;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by MikeSamsung7 on 11/01/2017.
  */
@@ -10,37 +13,33 @@ public class TrackingEvent {
     private String parcelID;
     private String eventDateTime;
 
-    public String getEventDateTime() {
-        return eventDateTime;
-    }
-
-    public void setEventDateTime(String eventDateTime) {
+    @JsonCreator
+    public TrackingEvent(
+            @JsonProperty("eventType") String eventType,
+            @JsonProperty("vanId") String vanID,
+            @JsonProperty("parcelId") String parcelID,
+            @JsonProperty("eventDateTime") String eventDateTime)
+    {
+        this.eventType = eventType;
+        this.vanID = vanID;
+        this.parcelID = parcelID;
         this.eventDateTime = eventDateTime;
     }
 
-    public String getParcelID() {
-        return parcelID;
-    }
 
-    public void setParcelID(String parcelID) {
-        this.parcelID = parcelID;
+    public String getEventType() {
+        return eventType;
     }
 
     public String getVanID() {
         return vanID;
     }
 
-    public void setVanID(String vanID) {
-        this.vanID = vanID;
+    public String getParcelID() {
+        return parcelID;
     }
 
-    public String getEventType() {
-        return "ORDER_PICKED";
-    }
-        //eventType;
-
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+    public String getEventDateTime() {
+        return eventDateTime;
     }
 }

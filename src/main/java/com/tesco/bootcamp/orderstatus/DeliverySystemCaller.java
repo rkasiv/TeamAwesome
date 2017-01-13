@@ -39,13 +39,14 @@ public class DeliverySystemCaller {
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
+
     public TrackingEvent getLatestTrackingEvent(String orderID){
 
         TrackingEvent latestEvent;
 
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
-        if(orderEvents.size()>1) {
+        if(orderEvents.size()>0) {
 
             for (EventFromDelService event : orderEvents) {
                 parcelID = event.getParcelID();

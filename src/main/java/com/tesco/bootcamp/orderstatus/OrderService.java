@@ -23,10 +23,12 @@ public class OrderService {
         Boolean b = orderSystemCheck.CheckOrder(orderid);
 
 
+
+
         if (b) {
 
-            DelSystemCaller delSystemCaller = new DelSystemCaller();
-            TrackingEvent eventRes = delSystemCaller.getLatestTrackingEvent(orderid);
+            DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller();
+            TrackingEvent eventRes = deliverySystemCaller.getLatestTrackingEvent(orderid);
 
             String latestEvent = eventRes.getEventType();
 

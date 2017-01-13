@@ -22,7 +22,7 @@ public class DeliverySystemCaller {
     private String getEventsByParcelURL;
     private Object EventFromDelService;
 
-    private final RestTemplate restTemplate;
+    private RestTemplate restTemplate = null;
 
     public DeliverySystemCaller(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
@@ -32,7 +32,7 @@ public class DeliverySystemCaller {
     }
 
     public DeliverySystemCaller(){
-        
+
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
         getEventsByOrderURL = "events/ghs/order?orderId=";
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";

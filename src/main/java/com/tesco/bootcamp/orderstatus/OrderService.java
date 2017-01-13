@@ -15,27 +15,26 @@ import java.util.Optional;
 public class OrderService {
 
 
-//private final String orderid;
-//     @Autowired
-//
-//    public OrderService(String orderid){
-//        this.orderid = orderid;
-//
-//    }
-
-    public OrderStatus  getOrderStatus(String orderid) {
+    public Optional <OrderStatus>  getOrderStatus(String orderid) {
         //Using the order ID to send to the delivery system class, which will in return get the latest order event for
         //the order
 
-        DelSystemCaller delSystemCaller = new DelSystemCaller();
-        TrackingEvent eventRes = delSystemCaller.getLatestTrackingEvent(orderid);
-
-        String latestEvent = eventRes.getEventType();
+        OrderSystemCheck orderSystemCheck = new OrderSystemCheck();
+        Boolean b = orderSystemCheck.CheckOrder(orderid);
 
 
-        String orderStatus = eventToOrderStatus(latestEvent);
-        OrderStatus os = new OrderStatus(orderid, orderStatus);
-        return os;
+        if (b) {
+
+            DelSystemCaller delSystemCaller = new DelSystemCaller();
+            TrackingEvent eventRes = delSystemCaller.getLatestTrackingEvent(orderid);
+
+            String latestEvent = eventRes.getEventType();
+
+
+            String orderStatus = eventToOrderStatus(latestEvent);
+            OrderStatus os = new OrderStatus(orderid, orderStatus);
+            return Optional.of(os);
+        } else return Optional.empty();
 
 
     }
@@ -60,9 +59,6 @@ public class OrderService {
                 return "Order_placed";
         }
 
-//    public Optional<OrderStatus> getOrderStatus(String orderId) {
-//        return Optional.empty();
-//
-//    }
+
     }
 }

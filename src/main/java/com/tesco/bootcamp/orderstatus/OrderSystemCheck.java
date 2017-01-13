@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Created by Bradley on 12/01/2017.
  */
+
 public class OrderSystemCheck {
 
 
@@ -21,24 +22,11 @@ public class OrderSystemCheck {
     public OrderSystemCheck() {
 
         orderServiceBaseURL = "http://orders.dev-environment.tesco.codurance.io:8080/";
-        checkStatusByOrder = "/ghs/order?orderId=";
-
+        checkStatusByOrder = "ghs/order?orderId=";
     }
-
-
-
 
     public boolean CheckOrder(String orderId) {
         boolean checkEvents = checkOrders(orderId);
-
-
-
-//        for (EventFromOrderService event : checkEvents) {
-//            status = event.getStatus();
-//        }
-//            if (status == 404)
-//                result = false;
-
 
         return checkEvents;
     }
@@ -61,6 +49,15 @@ public class OrderSystemCheck {
 
             return collectRequestResult.getStatusCode().equals(HttpStatus.OK);
 
+        } catch (Exception e) {
+
+            throw new RuntimeException("Failed to obtain order ID", e);
+
+        }
+    }
+
+}
+// keeping this info commented out in case we need this for further
 //            return collectRequestResult.getBody().stream()
 //                    .map(eventFromOrderService -> new EventFromOrderService(eventFromOrderService.getTimestamp(),
 //                            eventFromOrderService.getStatus(),
@@ -68,18 +65,3 @@ public class OrderSystemCheck {
 //                            eventFromOrderService.getException(),
 //                            eventFromOrderService.getMessage(),
 //                            eventFromOrderService.getPath())).collect(Collectors.toList());
-
-        } catch (Exception e) {
-
-
-            throw new RuntimeException("Failed to obtain parcel ID", e);
-
-        }
-
-
-
-
-
-    }
-
-}

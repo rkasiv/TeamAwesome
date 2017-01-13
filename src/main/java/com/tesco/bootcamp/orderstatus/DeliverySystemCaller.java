@@ -3,6 +3,7 @@ package com.tesco.bootcamp.orderstatus;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.DateFormat;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Created by MikeSamsung7 on 11/01/2017.
  */
+@Service
 public class DeliverySystemCaller {
 
     private String parcelID;

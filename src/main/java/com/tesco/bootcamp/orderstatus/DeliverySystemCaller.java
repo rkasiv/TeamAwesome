@@ -31,6 +31,13 @@ public class DeliverySystemCaller {
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
+    public DeliverySystemCaller(){
+        
+        deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
+        getEventsByOrderURL = "events/ghs/order?orderId=";
+        getEventsByParcelURL = "events/ghs/parcel?parcelId=";
+    }
+
     public TrackingEvent getLatestTrackingEvent(String orderID){
 
         TrackingEvent latestEvent;

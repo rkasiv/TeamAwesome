@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Created by MikeSamsung7 on 11/01/2017.
  */
-public class DelSystemCaller {
+public class DeliverySystemCaller {
 
     private String parcelID;
     private String deliveryServiceBaseURL;
@@ -22,22 +22,43 @@ public class DelSystemCaller {
     private String getEventsByParcelURL;
     private Object EventFromDelService;
 
-    public DelSystemCaller(){
+    private final RestTemplate restTemplate;
+
+    public DeliverySystemCaller(RestTemplate restTemplate){
+        this.restTemplate = restTemplate;
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
         getEventsByOrderURL = "events/ghs/order?orderId=";
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
     public TrackingEvent getLatestTrackingEvent(String orderID){
+
+        TrackingEvent latestEvent;
+
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
-        for (EventFromDelService event: orderEvents){
-            parcelID = event.getParcelID();
+        if(orderEvents.size()>1) {
+
+            for (EventFromDelService event : orderEvents) {
+                parcelID = event.getParcelID();
+            }
+
+                List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
+
+            if (trackingEvents.size()>1) {
+
+
+                latestEvent = returnLatestTrackingEvent(trackingEvents);
+
+            }
+
+            else{
+                latestEvent = new TrackingEvent("NO_EVENT","","","");
+            }
         }
-
-        List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
-
-        TrackingEvent latestEvent = returnLatestTrackingEvent(trackingEvents);
+        else{
+            latestEvent = new TrackingEvent("NO_EVENT","","","");
+        }
 
         return latestEvent;
     }
@@ -72,7 +93,6 @@ public class DelSystemCaller {
 
 
     private List<EventFromDelService> collectParcelID(String orderID) {
-        RestTemplate restTemplate = new RestTemplate();
         StringBuilder sb = new StringBuilder();
         sb.append(deliveryServiceBaseURL);
         sb.append(getEventsByOrderURL);
@@ -97,7 +117,6 @@ public class DelSystemCaller {
     }
 
     private List<TrackingEvent> collectTrackingEvents(String parcelID) {
-        RestTemplate restTemplate = new RestTemplate();
         StringBuilder sb = new StringBuilder();
         sb.append(deliveryServiceBaseURL);
         sb.append(getEventsByParcelURL);

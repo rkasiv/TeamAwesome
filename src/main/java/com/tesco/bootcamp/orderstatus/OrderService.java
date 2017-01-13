@@ -23,7 +23,7 @@ public class OrderService {
 //
 //    }
 
-    public OrderStatus  getOrderStatus(String orderid) {
+    public Optional<OrderStatus>  getOrderStatus(String orderid) {
         //Using the order ID to send to the delivery system class, which will in return get the latest order event for
         //the order
 
@@ -35,9 +35,7 @@ public class OrderService {
 
         String orderStatus = eventToOrderStatus(latestEvent);
         OrderStatus os = new OrderStatus(orderid, orderStatus);
-        return os;
-
-
+        return Optional.of(os);
     }
 
     public static String eventToOrderStatus(String v) {

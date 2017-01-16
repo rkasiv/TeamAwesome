@@ -36,13 +36,30 @@ public class DeliverySystemCallerTest {
     }
 
     @Test
+    public void test_getLatestTrackingEvent() throws Exception{
+
+        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller();
+        String validOrderID = "f7acafe4-876e-4d63-af36-216dfcd1729c";
+
+        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(validOrderID);
+
+        assertThat(latestEvent.getEventDateTime(), is ("2017-01-13T12:44:50.275+0000"));
+    }
+
+    @Test
     public void test_getLatestTrackingEvent_OrderID_Empty_String() throws Exception {
         String orderID = "";
+        RestTemplate restTemplate = new RestTemplate();
         DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(new RestTemplate());
-        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(orderID);
-        assertThat(latestEvent.getEventDateTime(), is ("2017-01-10T00:24:32.237+0000"));
+        MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+        mockNoEventRequest(server);
+
+        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
+
+        assertThat(latestEvent.getEventType(), is ("NO_EVENT"));
 
     }
+
 
     private void mockGhsParcelEventsRequest(MockRestServiceServer server) {
         server.expect(once(), requestTo("http://delivery.dev-environment.tesco.codurance.io:8080/events/ghs/parcel?parcelId=" + A_PARCEL_ID))
@@ -68,6 +85,17 @@ public class DeliverySystemCallerTest {
                         "    \"eventType\": \"PARCEL_DELIVERED\"," +
                         "    \"vanId\": \"16597585-f915-4065-b650-c7065457b8a5\"," +
                         "    \"parcelId\": \""+ A_PARCEL_ID + "\"," +
+                        "    \"eventDateTime\": \"2017-01-11T17:09:49.878+0000\"" +
+                        "  }]", MediaType.APPLICATION_JSON));
+    }
+
+    private void mockNoEventRequest(MockRestServiceServer server) {
+        server.expect(once(), requestTo("http://delivery.dev-environment.tesco.codurance.io:8080/events/ghs/order?orderId=" + AN_ORDER_ID))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("[ {\n" +
+                        "    \"eventType\": \"PARCEL_DELIVERED\"," +
+                        "    \"vanId\": \"16597585-f915-4065-b650-c7065457b8a5\"," +
+                        "    \"parcelId\": \"" + A_PARCEL_ID + "\"," +
                         "    \"eventDateTime\": \"2017-01-11T17:09:49.878+0000\"" +
                         "  }]", MediaType.APPLICATION_JSON));
     }

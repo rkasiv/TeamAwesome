@@ -31,8 +31,7 @@ public class OrderSystemCheck {
     }
 
 
-
-    private boolean isOrderAvailable(String orderId){
+    private boolean isOrderAvailable(String orderId) {
 
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder sb = new StringBuilder();
@@ -43,19 +42,23 @@ public class OrderSystemCheck {
         try {
             ResponseEntity<String> collectRequestResult = restTemplate.exchange(
                     sb.toString(),
-                    HttpMethod.GET,null,
-                    new ParameterizedTypeReference<String>(){});
+                    HttpMethod.GET, null,
+                    new ParameterizedTypeReference<String>() {
+                    });
 
             return collectRequestResult.getStatusCode().equals(HttpStatus.OK);
 
         } catch (Exception e) {
 
-            throw new RuntimeException("Failed to obtain order ID", e);
+            return false;
 
+//            throw new RuntimeException("Failed to obtain order ID", e);
+// }
         }
     }
-
 }
+
+
 // keeping this info commented out in case we need this for further
 //            return collectRequestResult.getBody().stream()
 //                    .map(eventFromOrderService -> new EventFromOrderService(eventFromOrderService.getTimestamp(),

@@ -23,7 +23,7 @@ public class StatusController {
     }
 
     @RequestMapping(value = "/order-status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public OrderStatus getOrderStatus (@RequestParam(value = "orderId") String orderId) {
+    public OrderStatus getOrderStatus(@RequestParam(value = "orderId") String orderId) {
         return orderService.getOrderStatus(orderId).orElseThrow(OrderStatusNotFound::new);
     }
 }

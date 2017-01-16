@@ -1,6 +1,5 @@
 package com.tesco.bootcamp.orderstatus;
 
-import com.sun.deploy.net.HttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(StatusController.class)
@@ -48,10 +48,10 @@ public class StatusControllerTest {
     @Test
     public void shouldReturn400WhenOrderIdMissing() throws Exception {
         // given
-            // not required
+        // not required
         // when
         mvc.perform(get("/order-status").accept(MediaType.APPLICATION_JSON))
-        // then
+                // then
                 .andExpect(status().isBadRequest());
     }
 }

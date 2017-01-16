@@ -18,8 +18,7 @@ public class TrackingEvent {
             @JsonProperty("eventType") String eventType,
             @JsonProperty("vanId") String vanID,
             @JsonProperty("parcelId") String parcelID,
-            @JsonProperty("eventDateTime") String eventDateTime)
-    {
+            @JsonProperty("eventDateTime") String eventDateTime) {
         this.eventType = eventType;
         this.vanID = vanID;
         this.parcelID = parcelID;

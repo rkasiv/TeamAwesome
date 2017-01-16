@@ -26,14 +26,14 @@ public class DeliverySystemCaller {
 
     private RestTemplate restTemplate;
 
-    public DeliverySystemCaller(RestTemplate restTemplate){
+    public DeliverySystemCaller(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
         getEventsByOrderURL = "events/ghs/order?orderId=";
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
-    public DeliverySystemCaller(){
+    public DeliverySystemCaller() {
 
         restTemplate = new RestTemplate();
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
@@ -42,59 +42,56 @@ public class DeliverySystemCaller {
     }
 
 
-    public TrackingEvent getLatestTrackingEvent(String orderID){
+    public TrackingEvent getLatestTrackingEvent(String orderID) {
 
         TrackingEvent latestEvent;
 
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
-        if(orderEvents.size()>0) {
+        if (orderEvents.size() > 0) {
 
             for (EventFromDelService event : orderEvents) {
                 parcelID = event.getParcelID();
             }
 
-                List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
+            List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
 
-            if (trackingEvents.size()>1) {
+            if (trackingEvents.size() > 1) {
 
 
                 latestEvent = returnLatestTrackingEvent(trackingEvents);
 
+            } else {
+                latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
             }
-
-            else{
-                latestEvent = new TrackingEvent("NO_EVENT","","","");
-            }
-        }
-        else{
-            latestEvent = new TrackingEvent("NO_EVENT","","","");
+        } else {
+            latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
         }
 
         return latestEvent;
     }
 
-    private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents){
+    private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
         TrackingEvent latestEvent;
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         Date earliestDate;
         try {
             earliestDate = df.parse(trackingEvents.get(0).getEventDateTime());
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to parse earliestDate");
         }
         latestEvent = trackingEvents.get(0);
         Date eventDate;
 
-        for (TrackingEvent event: trackingEvents){
+        for (TrackingEvent event : trackingEvents) {
             try {
                 eventDate = df.parse(event.getEventDateTime());
-            }catch (Exception e) {
+            } catch (Exception e) {
 
                 throw new RuntimeException("Failed to parse eventDate", e);
             }
 
-            if (eventDate.after(earliestDate)){
+            if (eventDate.after(earliestDate)) {
                 latestEvent = event;
             }
         }
@@ -111,8 +108,9 @@ public class DeliverySystemCaller {
         try {
             ResponseEntity<List<EventFromDelService>> collectRequestResult = restTemplate.exchange(
                     sb.toString(),
-                    HttpMethod.GET,null,
-                    new ParameterizedTypeReference<List<EventFromDelService>>(){});
+                    HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<EventFromDelService>>() {
+                    });
 
             return collectRequestResult.getBody().stream()
                     .map(eventFromDelService -> new EventFromDelService(eventFromDelService.getEventType(),
@@ -135,8 +133,9 @@ public class DeliverySystemCaller {
         try {
             ResponseEntity<List<TrackingEvent>> collectRequestResult = restTemplate.exchange(
                     sb.toString(),
-                    HttpMethod.GET,null,
-                    new ParameterizedTypeReference<List<TrackingEvent>>(){});
+                    HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<TrackingEvent>>() {
+                    });
 
             return collectRequestResult.getBody().stream()
                     .map(trackingEvent -> new TrackingEvent(trackingEvent.getEventType(),

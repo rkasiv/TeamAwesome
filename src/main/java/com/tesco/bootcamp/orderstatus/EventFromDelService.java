@@ -20,8 +20,7 @@ public class EventFromDelService {
             @JsonProperty("shopId") String shopID,
             @JsonProperty("orderId") String orderID,
             @JsonProperty("parcelId") String parcelID,
-            @JsonProperty("eventDateTime") String eventDateTime)
-    {
+            @JsonProperty("eventDateTime") String eventDateTime) {
         this.eventType = eventType;
         this.shopID = shopID;
         this.orderID = orderID;

@@ -22,8 +22,7 @@ public class EventFromOrderService {
             @JsonProperty("error") String error,
             @JsonProperty("exception") String exception,
             @JsonProperty("message") String message,
-            @JsonProperty("path") String path )
-    {
+            @JsonProperty("path") String path) {
         this.timestamp = timestamp;
         this.status = status;
         this.error = error;

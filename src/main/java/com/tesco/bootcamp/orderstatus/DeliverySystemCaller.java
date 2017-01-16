@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.empty;
+
 @Service
 public class DeliverySystemCaller {
     private final String deliveryServiceBaseURL;
@@ -33,18 +35,16 @@ public class DeliverySystemCaller {
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
-
-    public TrackingEvent getLatestTrackingEvent(String orderID) {
+    public Optional<TrackingEvent> getLatestTrackingEvent(String orderID) {
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
         if (orderEvents.size() <= 0) {
-            return new TrackingEvent("NO_EVENT", "", "", "");
+            return empty();
         }
 
         List<TrackingEvent> trackingEvents = collectTrackingEvents(getLastParcelId(orderEvents));
 
-        return returnLatestTrackingEvent(trackingEvents)
-                .orElseThrow(() -> new RuntimeException("expected at least one Tracking Event"));
+        return returnLatestTrackingEvent(trackingEvents);
     }
 
     private String getLastParcelId(List<EventFromDelService> orderEvents) {
@@ -119,8 +119,7 @@ public class DeliverySystemCaller {
 
 
         } catch (Exception e) {
-
-            throw new RuntimeException("Failed to obtain tracking ID", e);
+            throw new RuntimeException("Failed to obtain tracking events", e);
         }
     }
 }

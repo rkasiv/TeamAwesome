@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
 /**
  * Created by cx11 on 11/01/2017.
  */
@@ -28,19 +31,16 @@ public class OrderService {
         //the order
 
         if (orderSystemCheck.isOrderMissing(orderid)) {
-            return Optional.empty();
+            return empty();
         }
 
-        TrackingEvent eventRes = deliverySystemCaller.getLatestTrackingEvent(orderid);
+        Optional<TrackingEvent> latestTrackingEvent = deliverySystemCaller.getLatestTrackingEvent(orderid);
+        String orderStatus = latestTrackingEvent
+                .map(TrackingEvent::getEventType)
+                .map(OrderService::eventToOrderStatus)
+                .orElse("ORDER_PLACED");
 
-        String latestEvent = eventRes.getEventType();
-
-
-        String orderStatus = eventToOrderStatus(latestEvent);
-        OrderStatus os = new OrderStatus(orderid, orderStatus);
-        return Optional.of(os);
-
-
+        return of(new OrderStatus(orderid, orderStatus));
     }
 
     public static String eventToOrderStatus(String v) {

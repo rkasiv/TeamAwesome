@@ -1,8 +1,6 @@
 package com.tesco.bootcamp.orderstatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,28 +14,32 @@ import java.util.Optional;
 public class OrderService {
 
 
-    public Optional <OrderStatus>  getOrderStatus(String orderid) {
+    private final OrderSystemCheck orderSystemCheck;
+    private final DeliverySystemCaller deliverySystemCaller;
+
+    @Autowired
+    public OrderService(OrderSystemCheck orderSystemCheck, DeliverySystemCaller deliverySystemCaller) {
+        this.orderSystemCheck = orderSystemCheck;
+        this.deliverySystemCaller = deliverySystemCaller;
+
+    }
+
+    public Optional<OrderStatus> getOrderStatus(String orderid) {
         //Using the order ID to send to the delivery system class, which will in return get the latest order event for
         //the order
 
-        OrderSystemCheck orderSystemCheck = new OrderSystemCheck();
-        Boolean b = orderSystemCheck.CheckOrder(orderid);
+        if (orderSystemCheck.isOrderMissing(orderid)) {
+            return Optional.empty();
+        }
+
+        TrackingEvent eventRes = deliverySystemCaller.getLatestTrackingEvent(orderid);
+
+        String latestEvent = eventRes.getEventType();
 
 
-
-
-        if (b) {
-
-            DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller();
-            TrackingEvent eventRes = deliverySystemCaller.getLatestTrackingEvent(orderid);
-
-            String latestEvent = eventRes.getEventType();
-
-
-            String orderStatus = eventToOrderStatus(latestEvent);
-            OrderStatus os = new OrderStatus(orderid, orderStatus);
-            return Optional.of(os);
-        } else return Optional.empty();
+        String orderStatus = eventToOrderStatus(latestEvent);
+        OrderStatus os = new OrderStatus(orderid, orderStatus);
+        return Optional.of(os);
 
 
     }

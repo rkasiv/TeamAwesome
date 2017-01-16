@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,46 +41,36 @@ public class DeliverySystemCaller {
             return new TrackingEvent("NO_EVENT", "", "", "");
         }
 
-
         List<TrackingEvent> trackingEvents = collectTrackingEvents(getLastParcelId(orderEvents));
 
-        if (trackingEvents.size() == 1) {
-            return new TrackingEvent("NO_EVENT", "", "", "");
-        }
-
-        return returnLatestTrackingEvent(trackingEvents);
+        return returnLatestTrackingEvent(trackingEvents)
+                .orElseThrow(() -> new RuntimeException("expected at least one Tracking Event"));
     }
 
     private String getLastParcelId(List<EventFromDelService> orderEvents) {
         return orderEvents.get(orderEvents.size() - 1).getParcelID();
     }
 
-    private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
-        TrackingEvent latestEvent;
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        Date earliestDate;
+    private Optional<TrackingEvent> returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
+        return trackingEvents.stream()
+                .sorted(DeliverySystemCaller.this::lastEventFirst)
+                .findFirst();
+    }
+
+    private int lastEventFirst(TrackingEvent event1, TrackingEvent event2) {
+        Date firstDate = parseDate(event1);
+        Date secondDate = parseDate(event2);
+
+        return secondDate.compareTo(firstDate);
+    }
+
+    private Date parseDate(TrackingEvent event) {
         try {
-            earliestDate = df.parse(trackingEvents.get(0).getEventDateTime());
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                    .parse(event.getEventDateTime());
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse earliestDate");
         }
-        latestEvent = trackingEvents.get(0);
-        Date eventDate;
-
-        for (TrackingEvent event : trackingEvents) {
-            try {
-                eventDate = df.parse(event.getEventDateTime());
-            } catch (Exception e) {
-
-                throw new RuntimeException("Failed to parse eventDate", e);
-            }
-
-            if (eventDate.after(earliestDate)) {
-                latestEvent = event;
-            }
-        }
-
-        return latestEvent;
     }
 
 

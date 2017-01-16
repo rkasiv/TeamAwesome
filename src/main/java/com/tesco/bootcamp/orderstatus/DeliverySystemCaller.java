@@ -53,6 +53,7 @@ public class DeliverySystemCaller {
 
     private Optional<TrackingEvent> returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
         return trackingEvents.stream()
+                .filter(EventType::isKnownEvent)
                 .sorted(DeliverySystemCaller.this::lastEventFirst)
                 .findFirst();
     }

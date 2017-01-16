@@ -12,19 +12,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by MikeSamsung7 on 11/01/2017.
- */
 @Service
 public class DeliverySystemCaller {
-
-    private String parcelID;
-    private String deliveryServiceBaseURL;
-    private String getEventsByOrderURL;
-    private String getEventsByParcelURL;
-    private Object EventFromDelService;
-
-    private RestTemplate restTemplate;
+    private final String deliveryServiceBaseURL;
+    private final String getEventsByOrderURL;
+    private final String getEventsByParcelURL;
+    private final RestTemplate restTemplate;
 
     public DeliverySystemCaller(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -34,7 +27,6 @@ public class DeliverySystemCaller {
     }
 
     public DeliverySystemCaller() {
-
         restTemplate = new RestTemplate();
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
         getEventsByOrderURL = "events/ghs/order?orderId=";
@@ -43,32 +35,24 @@ public class DeliverySystemCaller {
 
 
     public TrackingEvent getLatestTrackingEvent(String orderID) {
-
-        TrackingEvent latestEvent;
-
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
-        if (orderEvents.size() > 0) {
-
-            for (EventFromDelService event : orderEvents) {
-                parcelID = event.getParcelID();
-            }
-
-            List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
-
-            if (trackingEvents.size() > 1) {
-
-
-                latestEvent = returnLatestTrackingEvent(trackingEvents);
-
-            } else {
-                latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
-            }
-        } else {
-            latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
+        if (orderEvents.size() <= 0) {
+            return new TrackingEvent("NO_EVENT", "", "", "");
         }
 
-        return latestEvent;
+
+        List<TrackingEvent> trackingEvents = collectTrackingEvents(getLastParcelId(orderEvents));
+
+        if (trackingEvents.size() == 1) {
+            return new TrackingEvent("NO_EVENT", "", "", "");
+        }
+
+        return returnLatestTrackingEvent(trackingEvents);
+    }
+
+    private String getLastParcelId(List<EventFromDelService> orderEvents) {
+        return orderEvents.get(orderEvents.size() - 1).getParcelID();
     }
 
     private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {

@@ -57,7 +57,7 @@ public class DeliverySystemCallerTest {
 
         Optional <TrackingEvent> latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
 
-        assertThat(latestEvent.get().getEventType(), is("NO_EVENT"));
+        assertThat(latestEvent, is(Optional.empty()));
 
     }
 

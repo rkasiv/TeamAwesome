@@ -6,6 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.client.ExpectedCount.once;
@@ -28,10 +30,10 @@ public class DeliverySystemCallerTest {
         mockGhsOrderEventsRequest(server);
         mockGhsParcelEventsRequest(server);
 
-        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
+        Optional<TrackingEvent> latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
 
-        assertThat(latestEvent.getParcelID(), is(A_PARCEL_ID));
-        assertThat(latestEvent.getEventDateTime(), is("2017-01-10T00:24:32.237+0000"));
+        assertThat(latestEvent.get().getParcelID(), is(A_PARCEL_ID));
+        assertThat(latestEvent.get().getEventDateTime(), is("2017-01-10T00:24:32.237+0000"));
     }
 
     @Test
@@ -40,9 +42,9 @@ public class DeliverySystemCallerTest {
         DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller();
         String validOrderID = "f7acafe4-876e-4d63-af36-216dfcd1729c";
 
-        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(validOrderID);
+        Optional <TrackingEvent> latestEvent = deliverySystemCaller.getLatestTrackingEvent(validOrderID);
 
-        assertThat(latestEvent.getEventDateTime(), is("2017-01-13T12:44:50.275+0000"));
+        assertThat(latestEvent.get().getEventDateTime(), is("2017-01-13T12:44:50.275+0000"));
     }
 
     @Test
@@ -53,9 +55,9 @@ public class DeliverySystemCallerTest {
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
         mockNoEventRequest(server);
 
-        TrackingEvent latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
+        Optional <TrackingEvent> latestEvent = deliverySystemCaller.getLatestTrackingEvent(AN_ORDER_ID);
 
-        assertThat(latestEvent.getEventType(), is("NO_EVENT"));
+        assertThat(latestEvent.get().getEventType(), is("NO_EVENT"));
 
     }
 

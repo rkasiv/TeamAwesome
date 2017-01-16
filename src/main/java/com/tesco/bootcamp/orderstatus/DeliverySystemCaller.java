@@ -6,25 +6,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by MikeSamsung7 on 11/01/2017.
- */
+import static java.util.Optional.empty;
+
 @Service
 public class DeliverySystemCaller {
-
-    private String parcelID;
-    private String deliveryServiceBaseURL;
-    private String getEventsByOrderURL;
-    private String getEventsByParcelURL;
-    private Object EventFromDelService;
-
-    private RestTemplate restTemplate;
+    private final String deliveryServiceBaseURL;
+    private final String getEventsByOrderURL;
+    private final String getEventsByParcelURL;
+    private final RestTemplate restTemplate;
 
     public DeliverySystemCaller(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -34,69 +29,49 @@ public class DeliverySystemCaller {
     }
 
     public DeliverySystemCaller() {
-
         restTemplate = new RestTemplate();
         deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
         getEventsByOrderURL = "events/ghs/order?orderId=";
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }
 
-
-    public TrackingEvent getLatestTrackingEvent(String orderID) {
-
-        TrackingEvent latestEvent;
-
+    public Optional<TrackingEvent> getLatestTrackingEvent(String orderID) {
         List<EventFromDelService> orderEvents = collectParcelID(orderID);
 
-        if (orderEvents.size() > 0) {
-
-            for (EventFromDelService event : orderEvents) {
-                parcelID = event.getParcelID();
-            }
-
-            List<TrackingEvent> trackingEvents = collectTrackingEvents(parcelID);
-
-            if (trackingEvents.size() > 1) {
-
-
-                latestEvent = returnLatestTrackingEvent(trackingEvents);
-
-            } else {
-                latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
-            }
-        } else {
-            latestEvent = new TrackingEvent("NO_EVENT", "", "", "");
+        if (orderEvents.size() <= 0) {
+            return empty();
         }
 
-        return latestEvent;
+        List<TrackingEvent> trackingEvents = collectTrackingEvents(getLastParcelId(orderEvents));
+
+        return returnLatestTrackingEvent(trackingEvents);
     }
 
-    private TrackingEvent returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
-        TrackingEvent latestEvent;
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        Date earliestDate;
+    private String getLastParcelId(List<EventFromDelService> orderEvents) {
+        return orderEvents.get(orderEvents.size() - 1).getParcelID();
+    }
+
+    private Optional<TrackingEvent> returnLatestTrackingEvent(List<TrackingEvent> trackingEvents) {
+        return trackingEvents.stream()
+                .filter(EventType::isKnownEvent)
+                .sorted(DeliverySystemCaller.this::lastEventFirst)
+                .findFirst();
+    }
+
+    private int lastEventFirst(TrackingEvent event1, TrackingEvent event2) {
+        Date firstDate = parseDate(event1);
+        Date secondDate = parseDate(event2);
+
+        return secondDate.compareTo(firstDate);
+    }
+
+    private Date parseDate(TrackingEvent event) {
         try {
-            earliestDate = df.parse(trackingEvents.get(0).getEventDateTime());
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                    .parse(event.getEventDateTime());
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse earliestDate");
         }
-        latestEvent = trackingEvents.get(0);
-        Date eventDate;
-
-        for (TrackingEvent event : trackingEvents) {
-            try {
-                eventDate = df.parse(event.getEventDateTime());
-            } catch (Exception e) {
-
-                throw new RuntimeException("Failed to parse eventDate", e);
-            }
-
-            if (eventDate.after(earliestDate)) {
-                latestEvent = event;
-            }
-        }
-
-        return latestEvent;
     }
 
 
@@ -145,8 +120,7 @@ public class DeliverySystemCaller {
 
 
         } catch (Exception e) {
-
-            throw new RuntimeException("Failed to obtain tracking ID", e);
+            throw new RuntimeException("Failed to obtain tracking events", e);
         }
     }
 }

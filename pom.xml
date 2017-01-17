@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.codurance.tesco.bootcamp</groupId>
-    <artifactId>spring-boot-demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>order-status-service</artifactId>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>spring-boot-demo</name>
@@ -69,6 +69,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 

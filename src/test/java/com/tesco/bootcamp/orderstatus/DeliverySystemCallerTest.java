@@ -21,11 +21,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class DeliverySystemCallerTest {
     private static final String AN_ORDER_ID = "An_order_id";
     private static final String A_PARCEL_ID = "An_parcel_id";
+    private final String DELIVERY_URL = "http://delivery.dev-environment.tesco.codurance.io:8080";
 
     @Test
     public void test_getLatestTrackingEvent_valid_orderID() throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(restTemplate);
+        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(restTemplate, DELIVERY_URL);
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
         mockGhsOrderEventsRequest(server);
         mockGhsParcelEventsRequest(server);
@@ -39,7 +40,8 @@ public class DeliverySystemCallerTest {
     @Test
     public void test_getLatestTrackingEvent() throws Exception {
 
-        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller();
+        RestTemplate restTemplate = new RestTemplate();
+        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(restTemplate, DELIVERY_URL);
         String validOrderID = "f7acafe4-876e-4d63-af36-216dfcd1729c";
 
         Optional <TrackingEvent> latestEvent = deliverySystemCaller.getLatestTrackingEvent(validOrderID);
@@ -51,7 +53,7 @@ public class DeliverySystemCallerTest {
     public void test_getLatestTrackingEvent_OrderID_Empty_String() throws Exception {
         String orderID = "";
         RestTemplate restTemplate = new RestTemplate();
-        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(new RestTemplate());
+        DeliverySystemCaller deliverySystemCaller = new DeliverySystemCaller(new RestTemplate(), DELIVERY_URL);
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
         mockNoEventRequest(server);
 

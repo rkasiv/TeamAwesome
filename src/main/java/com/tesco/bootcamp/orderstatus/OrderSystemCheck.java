@@ -1,5 +1,9 @@
 package com.tesco.bootcamp.orderstatus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -7,20 +11,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by Bradley on 12/01/2017.
- */
 @Service
 public class OrderSystemCheck {
+    private final String checkStatusByOrder;
+    private final String orderServiceBaseURL;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String orderServiceBaseURL;
-    private String checkStatusByOrder;
-
-
-    public OrderSystemCheck() {
-
-        orderServiceBaseURL = "http://orders.dev-environment.tesco.codurance.io:8080/";
+    public OrderSystemCheck(@Value("${order.service.base.url}") String orderServiceBaseURL) {
+        this.orderServiceBaseURL = orderServiceBaseURL;
+        logger.info("Order Service Base URL is " + orderServiceBaseURL);
         checkStatusByOrder = "ghs/order?orderId=";
     }
 
@@ -28,9 +28,7 @@ public class OrderSystemCheck {
         return !isOrderAvailable(orderId);
     }
 
-
     private boolean isOrderAvailable(String orderId) {
-
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder sb = new StringBuilder();
         sb.append(orderServiceBaseURL);
@@ -43,25 +41,9 @@ public class OrderSystemCheck {
                     HttpMethod.GET, null,
                     new ParameterizedTypeReference<String>() {
                     });
-
             return collectRequestResult.getStatusCode().equals(HttpStatus.OK);
-
         } catch (Exception e) {
-
             return false;
-
-//            throw new RuntimeException("Failed to obtain order ID", e);
-// }
         }
     }
 }
-
-
-// keeping this info commented out in case we need this for further
-//            return collectRequestResult.getBody().stream()
-//                    .map(eventFromOrderService -> new EventFromOrderService(eventFromOrderService.getTimestamp(),
-//                            eventFromOrderService.getStatus(),
-//                            eventFromOrderService.getError(),
-//                            eventFromOrderService.getException(),
-//                            eventFromOrderService.getMessage(),
-//                            eventFromOrderService.getPath())).collect(Collectors.toList());

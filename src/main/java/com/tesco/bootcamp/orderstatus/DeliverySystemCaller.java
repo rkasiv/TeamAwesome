@@ -1,5 +1,9 @@
 package com.tesco.bootcamp.orderstatus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +20,16 @@ import static java.util.Optional.empty;
 
 @Service
 public class DeliverySystemCaller {
-    private final String deliveryServiceBaseURL;
+    //private final String deliveryServiceBaseURL;
     private final String getEventsByOrderURL;
     private final String getEventsByParcelURL;
     private final RestTemplate restTemplate;
+    private final String deliveryServiceBaseURL;
 
-    public DeliverySystemCaller(RestTemplate restTemplate) {
+
+    public DeliverySystemCaller(RestTemplate restTemplate, @Value("${delivery.service.base.url}") String deliveryServiceBaseURL) {
         this.restTemplate = restTemplate;
-        deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
-        getEventsByOrderURL = "events/ghs/order?orderId=";
-        getEventsByParcelURL = "events/ghs/parcel?parcelId=";
-    }
-
-    public DeliverySystemCaller() {
-        restTemplate = new RestTemplate();
-        deliveryServiceBaseURL = "http://delivery.dev-environment.tesco.codurance.io:8080/";
+        this.deliveryServiceBaseURL = deliveryServiceBaseURL;
         getEventsByOrderURL = "events/ghs/order?orderId=";
         getEventsByParcelURL = "events/ghs/parcel?parcelId=";
     }

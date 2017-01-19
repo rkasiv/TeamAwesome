@@ -33,5 +33,5 @@ To build Status API and service
 ## Running and killing processes
 1. Running a java process in the background & piping output to logfile `nohup java -jar <jar name> > <logfile name> 2>&1&` e.g. `nohup java -jar order-status-service-0.0.2.jar  > /var/data/logs/order-status.log 2>&1&
 `
-2. Find running java processes `pgrep java`
+2. Find running java processes `pgrep java` or `jps -m`
 3. Killing a running process `kill -TERM <pid>`

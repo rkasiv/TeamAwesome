@@ -22,6 +22,8 @@ public class OrderSystemCheck {
         this.orderServiceBaseURL = orderServiceBaseURL;
         logger.info("Order Service Base URL is " + orderServiceBaseURL);
         checkStatusByOrder = "ghs/order?orderId=";
+
+
     }
 
     public boolean isOrderMissing(String orderId) {

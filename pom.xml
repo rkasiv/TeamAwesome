@@ -5,7 +5,7 @@
 
     <groupId>com.codurance.tesco.bootcamp</groupId>
     <artifactId>order-status-service</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>spring-boot-demo</name>
@@ -60,9 +60,6 @@
 
     </dependencies>
 
-
-
-
     <build>
         <plugins>
             <plugin>
@@ -70,8 +67,26 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
+
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:rkasiv/TeamAwesome.git</connection>
+        <url>https://github.com/rkasiv/TeamAwesome</url>
+        <developerConnection>scm:git:git@github.com:rkasiv/TeamAwesome.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>Order-Status-release</id>
+            <url>http://nexus.tesco.codurance.io:8081/nexus/content/repositories/releases</url>
+        </repository>
+    </distributionManagement>
 
 
 </project>

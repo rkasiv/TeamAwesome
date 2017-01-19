@@ -17,6 +17,8 @@ To build Status API and service
 1. Login via Putty
 2. Execute `sudo mkdir /var/data/<application directory>` to create a new directory to house your jar file. e.g. `sudo mkdir /var/data/orderstatus`
 3. Execute `sudo chown <userid>:<userid> <application directory>` to change the owner of the new directory. e.g. `sudo chown ubuntu:ubuntu orderstatus`
+
+
 ####Place Jar on server:
 1. Copy jar across into the application directory
 2. Copy your environment-specific application.properties file across to same directory (if required)

@@ -4,10 +4,11 @@ To build Status API and service
 ##Deployment Steps:
 
 ###Git:
-1. Add & Commit all final code changes
-2. Push to remote
-3. Tag your master branch: `git tag <application>-<version>` e.g. `git tag order-status-service-0.0.2`
-4. Push your new tag to remote `git push --tags`
+1. Check that POM file contains the correct version number that is to be deployed.
+2. Add & Commit all final code changes
+3. Push to remote
+4. Tag your master branch: `git tag <application>-<version>` e.g. `git tag order-status-service-0.0.2`
+5. Push your new tag to remote `git push --tags`
 
 ###Maven
 1. Run Maven package build & verify jar file created

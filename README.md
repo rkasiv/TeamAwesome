@@ -30,7 +30,7 @@ To build Status API and service
 ###Run your jar
 1. Execute `java -jar <jar filename>.jar` e.g. `java -jar order-status-service-0.0.2.jar` (make sure to run this command from the directory containing the jar otherwise the application.properties file will not be used)
 
-## Runnning and killing processes
+## Running and killing processes
 1. Running a java process in the background & piping output to logfile `nohup java -jar <jar name> > <logfile name> 2>&1&` e.g. `nohup java -jar order-status-service-0.0.2.jar  > /var/data/logs/order-status.log 2>&1&
 `
 2. Find running java processes `pgrep java`
